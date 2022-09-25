@@ -1,4 +1,3 @@
-const { count } = require('../model/user.model');
 const User = require('../model/user.model')
 
 
