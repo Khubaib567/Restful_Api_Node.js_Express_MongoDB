@@ -14,6 +14,12 @@ const createUser = (async(req,res)=>{
         status: 0,
         message: "Email is required.",
       });
+    }else if (!object.password) {
+        res.status(400).send({
+          status: 0,
+          message: "Password is required.",
+        });
+      
     }else{
       const user = await User.find({ email: req.body.email });
       if (user.length >= 1) {
@@ -35,6 +41,7 @@ const createUser = (async(req,res)=>{
             userId: final_id,
             name: req.body.name,
             email:req.body.email,
+            password:req.body.password,
             age: req.body.age,
             phoneNo:req.body.phoneNo
           };
@@ -153,8 +160,21 @@ const deleteUser = (async(req,res)=>{
 
 // delete all user
 const deleteAllUser = (async(req,res)=>{
-  await User.deleteMany()
-  res.status(201).json({ message:"All user has been deleted!"})
+  try{
+  const user = await User.find();
+    if(user.length == 0){
+      res.status(200).json({message: "All user has been deleted already!"});
+    }
+    else{
+      await User.deleteMany()
+      res.status(201).json({ message:"All user has been deleted!"})
+    
+    }
+  }catch(err){
+    return res.status(404).send(err.message);
+  }
+
+  
 })
 
 module.exports = {getAllUser,createUser,getUser,updateUser,deleteUser,deleteAllUser}
